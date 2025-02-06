@@ -14,21 +14,39 @@
 7. [Pruebas y Validación](#pruebas-y-validacion)
 8. [Consideraciones Futuras](#consideraciones-futuras)
 
-## Resumen Ejecutivo {#resumen-ejecutivo}
+## Resumen del Design Doc {#resumen-ejecutivo}
 
 Este documento describe el diseño de un Sistema de Recursos Humanos completo, desarrollado desde cero utilizando tecnologías modernas como Next.js 15, React 19 y Laravel. El sistema gestionará información completa de empleados, estructura organizacional, asistencia, beneficios y más.
+
+Esto debido a que el anterior sistema de Gestión Humana, está quedando con tecnologías obsoletas. Y debido a la necesidad de crecer de manera exponencial con la tecnología, tomamos esta decisión.
+
+Los integrantes de la primera versión del documento son los siguientes:
+
+- Valeria Urdaneta
+- Luis Viera
+- Francisco García
+- Yoiner Moreno
+- José Morales
 
 ## Contexto {#contexto}
 
 La organización necesita un sistema moderno y flexible para la gestión de recursos humanos que permita:
+
 - Gestión completa de información de empleados
 - Estructura organizacional configurable de hasta 7 niveles
 - Control de asistencia y marcaciones
 - Gestión de vacaciones y licencias
 - Seguimiento de amonestaciones y medidas disciplinarias
 - Manejo de casos especiales (discapacidad, Ley 15)
+- Control de Expediente
+
+¿En qué se hace relación con el expediente?:
+
+Véaselo como el historial del empleado/colaborador/funcionario dentro de la empresa. Ya que es necesario que cualquier modificación, sea cambio de departamento, cambio de vicepresidencia, cambio de grupo, aumento de salario, generación de licencia debe de quedar guardada en el historial.
 
 ## Arquitectura del Sistema {#arquitectura-del-sistema}
+
+En cuanto al Stack Tecnológico tenemos lo siguiente:
 
 ### Stack Tecnológico
 
@@ -45,23 +63,9 @@ Backend:
 
 ### Diagrama de Arquitectura
 
-```mermaid
-graph TB
-    subgraph Frontend
-        A[Next.js App] --> B[React Components]
-        B --> C[Shadcn-UI]
-        B --> D[State Management]
-    end
-    
-    subgraph Backend
-        E[Laravel API] --> F[Controllers]
-        F --> G[Services]
-        G --> H[Models]
-        H --> I[(PostgreSQL)]
-    end
-    
-    A --> E
-```
+![Diagrama de Arquitectura del Sistema](/sistema-rh.png)
+
+El diagrama anterior ilustra la arquitectura completa del sistema, mostrando la interacción entre los componentes del frontend y backend, así como el flujo de datos a través de las diferentes capas de la aplicación.
 
 ## Diseño Detallado {#diseño-detallado}
 
@@ -103,7 +107,18 @@ graph TB
    - Control de licencias médicas
    - Seguimiento de permisos especiales
 
+ 4. Expediente del Empleado
+   - Registrar cambio de departamento
+   - Registrar aumento de salario
+   - Registrar licencias
+
+En cuanto a las amonestaciones y vacaciones no tengo la seguridad sí serán manejadas a través del expediente o en ese caso especial se utilizará desde la otra base de datos.
+
 ## Modelo de Datos {#modelo-de-datos}
+
+En este caso, es el diagrama INICIAL (no es lo que quedará), de los modelos de datos. Tanto para la marcación, como del personal, su cargo y el nivel.
+
+Recordar que el nivel hace referencia a la estructura organizacional. Se tiene estimado manejar 7 niveles como máximo.
 
 ```mermaid
 erDiagram
@@ -147,6 +162,10 @@ El sistema utilizará Shadcn-ui para mantener una interfaz consistente y moderna
    - Resumen de personal activo
    - Indicadores clave
    - Notificaciones pendientes
+   - Marcaciones realizadas
+   - Tabla para ver los próximos cumpleaños
+   - Tabla para ver las marcaciones recientes
+   - Total de empleados
 
 2. Gestión de Empleados
    - Formularios de registro
@@ -154,27 +173,22 @@ El sistema utilizará Shadcn-ui para mantener una interfaz consistente y moderna
    - Gestión documental
 
 3. Control de Asistencia
-   - Registro de marcaciones
+   - Visualización de marcaciones
    - Reportes y estadísticas
    - Gestión de excepciones
+
+Recordar que para el punto 3, esto se manejará de manera externa. En el caso de los dispositivos, puede ser reflejado con la API de ZKTeco y/o la App de marcaciones.
+Lo ideal es manejar la lógica que se pueda trabajar con la misma tabla para ambos casos.
 
 ## Pruebas y Validación {#pruebas-y-validacion}
 
 ### Estrategia de Pruebas
 
-1. Pruebas Unitarias
-   - Frontend: Jest + React Testing Library
-   - Backend: PHPUnit para Laravel
-
-2. Pruebas de Integración
-   - API Testing
-   - Flujos completos de procesos
-
-3. Pruebas de Usuario
-   - Validación de interfaces
-   - Pruebas de usabilidad
+Por el momento no se tiene registrado realizar pruebas unitarias ya que desconozco como funcionaría para el caso de Laravel.
 
 ### Métricas de Calidad
+
+De parte del FrontEnd, se puede obtener lo siguiente debido a las mejoras en rendimiento del Framework:
 
 - Cobertura de código > 80%
 - Tiempo de respuesta < 2s
